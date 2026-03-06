@@ -139,6 +139,15 @@ export default function Nav() {
   }
 
   useEffect(() => {
+    function handleCleared() {
+      setCategories([])
+      setTotalBookmarks(0)
+    }
+    window.addEventListener('siftly:cleared', handleCleared)
+    return () => window.removeEventListener('siftly:cleared', handleCleared)
+  }, [])
+
+  useEffect(() => {
     // Fetch stats
     fetch('/api/stats')
       .then((r) => r.json())

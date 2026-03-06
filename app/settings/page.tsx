@@ -545,6 +545,7 @@ function DangerZoneSection({ onToast }: { onToast: (t: Toast) => void }) {
       setConfirming(false)
       setCleared(true)
       setTimeout(() => setCleared(false), 3000)
+      window.dispatchEvent(new CustomEvent('siftly:cleared'))
     } catch (err) {
       onToast({ type: 'error', message: err instanceof Error ? err.message : 'Failed to clear bookmarks' })
     } finally {
