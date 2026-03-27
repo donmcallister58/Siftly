@@ -48,7 +48,7 @@ interface TweetResult {
   }
   core?: {
     user_results?: {
-      result?: { legacy?: { screen_name?: string; name?: string } }
+      result?: { legacy?: { screen_name?: string; name?: string }; core?: { screen_name?: string; name?: string }; avatar?: { image_url?: string } }
     }
   }
   note_tweet?: { note_tweet_results?: { result?: { text?: string } } }
@@ -142,7 +142,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       continue
     }
 
-    const userLegacy = tweet.core?.user_results?.result?.legacy ?? {}
+    const uRes = tweet.core?.user_results?.result ?? {}
+    const userLegacy = uRes.core ?? uRes.legacy ?? {}
     const media = extractMedia(tweet)
 
     const created = await prisma.bookmark.create({

@@ -79,7 +79,7 @@ export interface TweetResult {
   __typename?: string
   rest_id?: string
   legacy?: TweetLegacy
-  core?: { user_results?: { result?: { legacy?: UserLegacy } } }
+  core?: { user_results?: { result?: { legacy?: UserLegacy; core?: UserLegacy; avatar?: { image_url?: string } } } }
   note_tweet?: { note_tweet_results?: { result?: { text?: string } } }
   article?: { article_results?: { result?: ArticleResult } }
   tweet?: TweetResult
@@ -255,7 +255,8 @@ export async function importTweets(
       }
 
       const media = extractMedia(tweet)
-      const userLegacy = tweet.core?.user_results?.result?.legacy ?? {}
+      const uRes = tweet.core?.user_results?.result ?? {}
+      const userLegacy = uRes.core ?? uRes.legacy ?? {}
 
       const rawDate = tweet.legacy?.created_at
       let parsedDate: Date | null = null
