@@ -18,6 +18,8 @@ import {
   Copy,
   Check,
   Coffee,
+  Menu,
+  X,
 } from 'lucide-react'
 
 interface NavItem {
@@ -125,6 +127,12 @@ export default function Nav() {
     return localStorage.getItem('nav-collections-open') !== 'false'
   })
   const [pipeline, setPipeline] = useState<PipelineStatus | null>(null)
+  const [mobileOpen, setMobileOpen] = useState(false)
+
+  // Close mobile sidebar on route change
+  useEffect(() => {
+    setMobileOpen(false)
+  }, [pathname])
 
   function toggleCollections() {
     setCollectionsOpen((v) => {
@@ -177,10 +185,41 @@ export default function Nav() {
   const visibleCats = showAllCats ? categories : categories.slice(0, 8)
 
   return (
-    <aside className="flex flex-col bg-zinc-900 border-r border-zinc-800/50 shrink-0 sticky top-0 h-screen overflow-y-auto" style={{ width: '228px' }}>
+    <>
+      {/* Mobile hamburger button — fixed top-left, hidden on md+ */}
+      <button
+        onClick={() => setMobileOpen(true)}
+        className="fixed top-3 left-3 z-50 flex md:hidden items-center justify-center w-10 h-10 rounded-lg bg-zinc-900 border border-zinc-800/50 text-zinc-400 hover:text-zinc-100 transition-colors"
+        aria-label="Open menu"
+      >
+        <Menu size={20} />
+      </button>
+
+      {/* Mobile backdrop overlay */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 z-50 bg-black/60 md:hidden"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
+      <aside className={`
+        flex flex-col bg-zinc-900 border-r border-zinc-800/50 shrink-0 h-screen overflow-y-auto
+        fixed top-0 left-0 z-50 transition-transform duration-200 ease-in-out
+        ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}
+        md:sticky md:translate-x-0 md:transition-none
+      `} style={{ width: '228px' }}>
 
       {/* Brand */}
       <div className="flex items-center justify-center gap-3 px-4 py-3.5 border-b border-zinc-800/50">
+        {/* Mobile close button */}
+        <button
+          onClick={() => setMobileOpen(false)}
+          className="md:hidden shrink-0 text-zinc-500 hover:text-zinc-200 transition-colors"
+          aria-label="Close menu"
+        >
+          <X size={18} />
+        </button>
         <img src="/logo.svg" alt="Siftly" className="w-9 h-9 shrink-0" />
         <span className="text-zinc-100 font-bold text-[17px] tracking-tight">
           Sift<span style={{ color: '#F5A623' }}>ly</span>
@@ -322,5 +361,6 @@ export default function Nav() {
 
       <SupportFooter />
     </aside>
+    </>
   )
 }
